@@ -21,27 +21,27 @@ class LoginWindow(QWidget): #ОКНО ЛОГИНА
         self.signup_button.clicked.connect(self.signup)
 
     def loginw(self): #САМ ЛОГИН
-        login = self.log.text()
-        password = self.pwd.text()
-        if not login:
+        self.login = self.log.text()
+        self.password = self.pwd.text()
+        if not self.login:
             QMessageBox.critical(
                 self, 'ОШИБКА!', 'Введите логин!',
                 QMessageBox.Ok)
             return
-        if not password:
+        if not self.password:
             QMessageBox.critical(
                 self, 'ОШИБКА!', 'Введите пароль!',
                 QMessageBox.Ok)
             return
         self.userd = cur.execute(f"SELECT id FROM users WHERE username = ?"
-                                  f" and password = ?", (login, password)).fetchone()
+                                  f" and password = ?", (self.login, self.password)).fetchone()
         self.admin = cur.execute("""SELECT id FROM users WHERE prava = 'yes'""").fetchone()
         if self.userd:
             if self.userd != self.admin:
-                self.userprofile = Profile(login)
+                self.userprofile = Profile(self.login)
                 self.userprofile.show()
             elif self.userd == self.admin:
-                 self.adminapnel = Admin(login)
+                 self.adminapnel = Admin(self.login)
                  self.adminapnel.show()
                  print('admin = true')
             self.close()
@@ -78,10 +78,11 @@ class Profile(QMainWindow): #ПРОФИЛЬ ЮЗЕРА
         uic.loadUi('main.ui', self)
         self.setWindowTitle('Профиль')
         self.name = args[0]
+        self.toexitlogin = args[0]
         self.pushButton.clicked.connect(self.run1)
         self.pushButton_2.clicked.connect(self.run2)
         self.pushButton_3.clicked.connect(self.run3)
-        self.logout.clicked.connect(self.logoutfunc)
+        self.logout.clicked.connect(self.toexit)
         self.balance = cur.execute(f"SELECT balance FROM users WHERE username = ?", args).fetchone()
         self.label_3.setText("Баланс: " f'{self.balance[0]}' "р.")
         self.label_4.setText(*args)
@@ -102,10 +103,30 @@ class Profile(QMainWindow): #ПРОФИЛЬ ЮЗЕРА
         self.lobby.show()
         self.close()
 
+    def toexit(self):
+        self.toex = Logout(self.toexitlogin)
+        self.toex.show()
+        self.close()
+
+
+class Logout(QWidget): #ВЫХОД
+    def __init__(self, *args):
+        super().__init__()
+        uic.loadUi('exitmenu.ui', self)
+        self.setWindowTitle('Выйти?')
+        self.loginl = args[0]
+        self.pushButton.clicked.connect(self.logoutfunc)
+        self.pushButton_2.clicked.connect(self.dontexit)
+
     def logoutfunc(self):
         self.close()
-        self.login = LoginWindow()
-        self.login.show()
+        self.loginw = LoginWindow()
+        self.loginw.show()
+
+    def dontexit(self):
+        self.close()
+        self.prof = Profile(self.loginl)
+        self.prof.show()
 
 
 class Admin(QMainWindow): #АДМИНКА
@@ -114,12 +135,13 @@ class Admin(QMainWindow): #АДМИНКА
         uic.loadUi('admin.ui', self)
         self.setWindowTitle('Админ-панель')
         self.name = args[0]
+        self.toexitlogin = args[0]
         self.pushButton.clicked.connect(self.run1)
         self.pushButton_2.clicked.connect(self.run2)
         self.pushButton_3.clicked.connect(self.run3)
         self.pushButton_4.clicked.connect(self.run4)
         self.pushButton_5.clicked.connect(self.run5)
-        self.logout.clicked.connect(self.logoutfunc)
+        self.logout.clicked.connect(self.toexit)
         self.balance = cur.execute(f"SELECT balance FROM users WHERE username = ?", args).fetchone()
         self.label_3.setText("Баланс: " f'{self.balance[0]}' "р.")
         self.label.setText(*args)
@@ -151,10 +173,30 @@ class Admin(QMainWindow): #АДМИНКА
         self.ban = BanHammer()
         self.ban.show()
 
+    def toexit(self):
+        self.toex = AdminLogout(self.toexitlogin)
+        self.toex.show()
+        self.close()
+
+
+class AdminLogout(QWidget): #ВЫХОД
+    def __init__(self, *args):
+        super().__init__()
+        uic.loadUi('exitmenu.ui', self)
+        self.setWindowTitle('Выйти?')
+        self.loginl = args[0]
+        self.pushButton.clicked.connect(self.logoutfunc)
+        self.pushButton_2.clicked.connect(self.dontexit)
+
     def logoutfunc(self):
         self.close()
-        self.login = LoginWindow()
-        self.login.show()
+        self.loginw = LoginWindow()
+        self.loginw.show()
+
+    def dontexit(self):
+        self.close()
+        self.prof = Admin(self.loginl)
+        self.prof.show()
 
 
 class AdmBalance(QMainWindow): #ИЗМЕНЕНИЕ БАЛАНСА
@@ -353,7 +395,6 @@ class NvutiGame(QMainWindow): #СЛЕДУЮЩИЕ 4 КЛАССА - ИГРЫ, О�
         self.lower.clicked.connect(self.menshe)
         self.label_3.setText("Баланс: " f'{self.balance}' "р.")
 
-
     def bolshe(self):
         if self.balance > 0:
             self.betz = self.lineEdit.text()
@@ -415,6 +456,10 @@ class NvutiGame(QMainWindow): #СЛЕДУЮЩИЕ 4 КЛАССА - ИГРЫ, О�
             QMessageBox.critical(
                 self, 'Денег нету', 'Будешь играть в кредит.',
                 QMessageBox.Ok)
+
+    def hohol(self):
+        sdf = Lobby()
+        sdf.show()
 
 
 class BonesGame(QMainWindow):
