@@ -6,7 +6,9 @@ import sqlite3
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QFileDialog, QInputDialog
 from PyQt5.QtWidgets import QWidget, QMessageBox, QLineEdit, QTableWidgetItem
+from PyQt5.QtGui import QImage, QPalette, QBrush
 from PyQt5 import QtCore, QtMultimedia
+from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QPixmap
 con = sqlite3.connect('users.sqlite')
 cur = con.cursor()
@@ -77,15 +79,24 @@ class Profile(QMainWindow): #ПРОФИЛЬ ЮЗЕРА
         super().__init__()
         uic.loadUi('main.ui', self)
         self.setWindowTitle('Профиль')
+        oImage = QImage("fnv.png")
+        palette = QPalette()
+        palette.setBrush(QPalette.Window, QBrush(oImage))
+        self.setPalette(palette)
         self.name = args[0]
         self.toexitlogin = args[0]
+        self.label.setStyleSheet("color: white")
         self.pushButton.clicked.connect(self.run1)
-        self.pushButton_2.clicked.connect(self.run2)
+        self.pushButton_2.clicked.connect(self.profmenu)
+        self.pushButton_2.setStyleSheet("background-color: green; color: white")
         self.pushButton_3.clicked.connect(self.run3)
+        self.logout.setStyleSheet("background-color: red; color: white;")
         self.logout.clicked.connect(self.toexit)
         self.balance = cur.execute(f"SELECT balance FROM users WHERE username = ?", args).fetchone()
         self.label_3.setText("Баланс: " f'{self.balance[0]}' "р.")
+        self.label_3.setStyleSheet("color: white")
         self.label_4.setText(*args)
+        self.label_4.setStyleSheet("color: white")
 
     def run1(self):
         fname = QFileDialog.getOpenFileName(self, 'Выбрать картинку', '')[0]
@@ -98,7 +109,7 @@ class Profile(QMainWindow): #ПРОФИЛЬ ЮЗЕРА
         if ok_pressed:
             self.label.setText(name)
 
-    def run2(self):
+    def profmenu(self):
         self.lobby = Lobby(self.balance, self.name)
         self.lobby.show()
         self.close()
@@ -138,10 +149,12 @@ class Admin(QMainWindow): #АДМИНКА
         self.toexitlogin = args[0]
         self.pushButton.clicked.connect(self.run1)
         self.pushButton_2.clicked.connect(self.run2)
+        self.pushButton_2.setStyleSheet("background-color: green; color: white")
         self.pushButton_3.clicked.connect(self.run3)
         self.pushButton_4.clicked.connect(self.run4)
         self.pushButton_5.clicked.connect(self.run5)
         self.logout.clicked.connect(self.toexit)
+        self.logout.setStyleSheet("background-color: red; color: white;")
         self.balance = cur.execute(f"SELECT balance FROM users WHERE username = ?", args).fetchone()
         self.label_3.setText("Баланс: " f'{self.balance[0]}' "р.")
         self.label.setText(*args)
