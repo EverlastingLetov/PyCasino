@@ -179,6 +179,7 @@ class Admin(QMainWindow): #АДМИНКА
     def run4(self):
         self.admbc = AdmBalance()
         self.admbc.show()
+        self.close()
 
     def run5(self):
         self.ban = BanHammer()
