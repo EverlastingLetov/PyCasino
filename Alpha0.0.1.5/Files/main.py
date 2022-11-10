@@ -179,7 +179,6 @@ class Admin(QMainWindow): #АДМИНКА
     def run4(self):
         self.admbc = AdmBalance()
         self.admbc.show()
-        self.close()
 
     def run5(self):
         self.ban = BanHammer()
@@ -345,7 +344,9 @@ class Lobby(QMainWindow): #МЕНЮ С ИГРАМИ
         self.pushButton_3.clicked.connect(self.run3)
         self.pushButton_4.clicked.connect(self.run4)
         self.profileButton.clicked.connect(self.run5)
+        self.profileButton.setStyleSheet("background-color: green; color: white")
         self.radioButtonCas.clicked.connect(self.run6)
+        self.radioButtonCas.setStyleSheet("background-color: green; color: white")
 
     def run1(self):
         self.nvutigame = NvutiGame(self.balance, self.name)
