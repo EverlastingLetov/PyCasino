@@ -8,13 +8,12 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QFileDialog, QInp
 from PyQt5.QtWidgets import QWidget, QMessageBox, QLineEdit, QTableWidgetItem
 from PyQt5.QtGui import QImage, QPalette, QBrush
 from PyQt5 import QtCore, QtMultimedia
-from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QPixmap
 con = sqlite3.connect('users.sqlite')
 cur = con.cursor()
 
 
-class LoginWindow(QWidget): #ОКНО ЛОГИНА
+class LoginWindow(QWidget): #ОКНО ВХОДА
     def __init__(self):
         super().__init__()
         uic.loadUi('login.ui', self)
@@ -58,12 +57,12 @@ class LoginWindow(QWidget): #ОКНО ЛОГИНА
         spassword = self.pwd.text()
         if not slogin:
             QMessageBox.critical(
-                self, 'ОШИБКА, ВАСЯ!', 'Введите логин!',
+                self, 'Ошибка входа!', 'Введите логин!',
                 QMessageBox.Ok)
             return
         if not spassword:
             QMessageBox.critical(
-                self, 'ОШИБКА, ВАСЯ!', 'Введите пароль!',
+                self, 'Ошибка входа!', 'Введите пароль!',
                 QMessageBox.Ok)
             return
         cur.execute("""INSERT INTO users (username, password, prava, balance) VALUES (?, ?, ?, ?)""",
@@ -74,7 +73,7 @@ class LoginWindow(QWidget): #ОКНО ЛОГИНА
             QMessageBox.Close)
 
 
-class Profile(QMainWindow): #ПРОФИЛЬ ЮЗЕРА
+class Profile(QMainWindow): #ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ
     def __init__(self, *args):
         super().__init__()
         uic.loadUi('main.ui', self)
@@ -397,7 +396,7 @@ class Player(QMainWindow): #РАДИО "МОХАВЕ"
         self.player.setMedia(content)
 
 
-class NvutiGame(QMainWindow): #СЛЕДУЮЩИЕ 4 КЛАССА - ИГРЫ, ОТДЕЛЬНО ПОМЕЧАТЬ НЕ БУДУ
+class NvutiGame(QMainWindow): #СЛЕДУЮЩИЕ 4 КЛАССА - ИГРЫ
     def __init__(self, *args):
         super().__init__()
         uic.loadUi('nvuti.ui', self)
