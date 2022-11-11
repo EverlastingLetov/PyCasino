@@ -471,10 +471,6 @@ class NvutiGame(QMainWindow): #СЛЕДУЮЩИЕ 4 КЛАССА - ИГРЫ
                 self, 'Денег нету', 'Будешь играть в кредит.',
                 QMessageBox.Ok)
 
-    def hohol(self):
-        sdf = Lobby()
-        sdf.show()
-
 
 class BonesGame(QMainWindow):
     def __init__(self, *args):
