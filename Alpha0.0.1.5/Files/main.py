@@ -85,10 +85,10 @@ class Profile(QMainWindow): #ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ
         self.name = args[0]
         self.toexitlogin = args[0]
         self.label.setStyleSheet("color: white")
-        self.pushButton.clicked.connect(self.run1)
+        self.pushButton.clicked.connect(self.avatar)
         self.pushButton_2.clicked.connect(self.profmenu)
         self.pushButton_2.setStyleSheet("background-color: green; color: white")
-        self.pushButton_3.clicked.connect(self.run3)
+        self.pushButton_3.clicked.connect(self.nameset)
         self.logout.setStyleSheet("background-color: red; color: white;")
         self.logout.clicked.connect(self.toexit)
         self.balance = cur.execute(f"SELECT balance FROM users WHERE username = ?", args).fetchone()
@@ -97,12 +97,12 @@ class Profile(QMainWindow): #ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ
         self.label_4.setText(*args)
         self.label_4.setStyleSheet("color: white")
 
-    def run1(self):
+    def avatar(self):
         fname = QFileDialog.getOpenFileName(self, 'Выбрать картинку', '')[0]
         self.pixmap = QPixmap(fname)
         self.label_2.setPixmap(self.pixmap)
 
-    def run3(self):
+    def nameset(self):
         name, ok_pressed = QInputDialog.getText(self, "Введите имя.",
                                                 "Ваше новое имя: ")
         if ok_pressed:
@@ -146,29 +146,29 @@ class Admin(QMainWindow): #АДМИНКА
         self.setWindowTitle('Админ-панель')
         self.name = args[0]
         self.toexitlogin = args[0]
-        self.pushButton.clicked.connect(self.run1)
-        self.pushButton_2.clicked.connect(self.run2)
+        self.pushButton.clicked.connect(self.avatar)
+        self.pushButton_2.clicked.connect(self.tolobb)
         self.pushButton_2.setStyleSheet("background-color: green; color: white")
-        self.pushButton_3.clicked.connect(self.run3)
-        self.pushButton_4.clicked.connect(self.run4)
-        self.pushButton_5.clicked.connect(self.run5)
+        self.pushButton_3.clicked.connect(self.dumpall)
+        self.pushButton_4.clicked.connect(self.balanceedit)
+        self.pushButton_5.clicked.connect(self.bhammer)
         self.logout.clicked.connect(self.toexit)
         self.logout.setStyleSheet("background-color: red; color: white;")
         self.balance = cur.execute(f"SELECT balance FROM users WHERE username = ?", args).fetchone()
         self.label_3.setText("Баланс: " f'{self.balance[0]}' "р.")
         self.label.setText(*args)
 
-    def run1(self):
+    def avatar(self):
         fname = QFileDialog.getOpenFileName(self, 'Выбрать картинку', '')[0]
         self.pixmap = QPixmap(fname)
         self.label_2.setPixmap(self.pixmap)
 
-    def run2(self):
+    def tolobb(self):
         self.lobby = Lobby(self.balance, self.name)
         self.lobby.show()
         self.close()
 
-    def run3(self):
+    def dumpall(self):
         dump_users = cur.execute("""SELECT * FROM users WHERE id > 0""").fetchall()
         print(*dump_users)
         with open('dump.csv', 'w') as f:
@@ -176,12 +176,12 @@ class Admin(QMainWindow): #АДМИНКА
             for num, item in enumerate(dump_users):
                 writer.writerow(dump_users[num])
 
-    def run4(self):
+    def balanceedit(self):
         self.admbc = AdmBalance()
         self.admbc.show()
         self.close()
 
-    def run5(self):
+    def bhammer(self):
         self.ban = BanHammer()
         self.ban.show()
 
@@ -288,7 +288,8 @@ class BanHammer(QMainWindow): #БАНХАММЕР
                 self, '', "Действительно заблокировать пользователя?",
                 QMessageBox.Yes, QMessageBox.No)
             if valid == QMessageBox.Yes:
-                cur.execute("INSERT INTO banned(id, username, password, prava, balance) VALUES(?, ?, ?, ?, ?)", *self.result)
+                cur.execute("INSERT INTO banned(id, username, password, prava, balance) VALUES(?, ?, ?, ?, ?)",
+                            *self.result)
                 cur.execute("DELETE FROM users WHERE id = ?", (self.item_id, ))
                 con.commit()
                 QMessageBox.critical(
@@ -309,7 +310,8 @@ class BanHammer(QMainWindow): #БАНХАММЕР
                 self, '', "Действительно разблокировать пользователя?",
                 QMessageBox.Yes, QMessageBox.No)
             if valid == QMessageBox.Yes:
-                cur.execute("INSERT INTO users(id, username, password, prava, balance) VALUES(?, ?, ?, ?, ?)", *self.result)
+                cur.execute("INSERT INTO users(id, username, password, prava, balance) VALUES(?, ?, ?, ?, ?)",
+                            *self.result)
                 cur.execute("DELETE FROM banned WHERE id = ?", (self.item_id, ))
                 con.commit()
                 QMessageBox.critical(
@@ -340,32 +342,32 @@ class Lobby(QMainWindow): #МЕНЮ С ИГРАМИ
         self.label_5.setPixmap(self.pixmap4)
         self.balance = args[0][0]
         self.name = args[1]
-        self.pushButton.clicked.connect(self.run1)
-        self.pushButton_2.clicked.connect(self.run2)
-        self.pushButton_3.clicked.connect(self.run3)
-        self.pushButton_4.clicked.connect(self.run4)
-        self.profileButton.clicked.connect(self.run5)
+        self.pushButton.clicked.connect(self.nvu)
+        self.pushButton_2.clicked.connect(self.bga)
+        self.pushButton_3.clicked.connect(self.slot)
+        self.pushButton_4.clicked.connect(self.nullsto)
+        self.profileButton.clicked.connect(self.prof)
         self.profileButton.setStyleSheet("background-color: green; color: white")
-        self.radioButtonCas.clicked.connect(self.run6)
+        self.radioButtonCas.clicked.connect(self.mojave)
         self.radioButtonCas.setStyleSheet("background-color: green; color: white")
 
-    def run1(self):
+    def nvu(self):
         self.nvutigame = NvutiGame(self.balance, self.name)
         self.nvutigame.show()
 
-    def run2(self):
+    def bga(self):
         self.bonesgame = BonesGame(self.balance, self.name)
         self.bonesgame.show()
 
-    def run3(self):
+    def slot(self):
         self.slotsgame = SlotsGame(self.balance, self.name)
         self.slotsgame.show()
 
-    def run4(self):
+    def nullsto(self):
         self.zerohund = Zerohundred(self.balance, self.name)
         self.zerohund.show()
 
-    def run5(self):
+    def prof(self):
         if self.name == "admin":
             self.profbutton = Admin(self.name)
             self.profbutton.show()
@@ -375,7 +377,7 @@ class Lobby(QMainWindow): #МЕНЮ С ИГРАМИ
             self.profbutton.show()
             self.close()
 
-    def run6(self):
+    def mojave(self):
         self.radio = Player()
         self.radio.show()
 
@@ -543,11 +545,13 @@ class SlotsGame(QMainWindow):
                 self.label_5.setText(f"{int(self.slot2)}")
                 self.label_9.setText(f"{int(self.slot3)}")
 
-                if (self.slot1 == self.slot2 == self.slot3) and (self.slot1 == 7) and (self.slot2 == 7) and (self.slot3 == 7):
+                if (self.slot1 == self.slot2 == self.slot3) and (self.slot1 == 7) and \
+                        (self.slot2 == 7) and (self.slot3 == 7):
                     self.balance = self.balance + (self.bet * 100)
                     win = 'Вы выиграли!'
                     self.label_6.setText(win)
-                    cur.execute(f"UPDATE users SET balance = balance + (? * 10)" f"WHERE username = ?", (self.bet, self.name))
+                    cur.execute(f"UPDATE users SET balance = balance + (? * 10)" f"WHERE username = ?",
+                                (self.bet, self.name))
                     con.commit()
                     self.label_3.setText("Баланс: " f'{self.balance}' "р.")
 
@@ -559,19 +563,23 @@ class SlotsGame(QMainWindow):
                     con.commit()
                     self.label_3.setText("Баланс: " f'{self.balance}' "р.")
 
-                elif (self.slot1 == self.slot3 == self.slot3) and (self.slot1 == 6) and (self.slot2 == 6) and (self.slot3 == 6):
+                elif (self.slot1 == self.slot3 == self.slot3) and (self.slot1 == 6) and (self.slot2 == 6) and\
+                        (self.slot3 == 6):
                     self.balance = self.balance + (self.bet * 2)
                     win = 'Вы выиграли!'
                     self.label_6.setText(win)
-                    cur.execute(f"UPDATE users SET balance = balance + (? * 2)" f"WHERE username = ?", (self.bet, self.name))
+                    cur.execute(f"UPDATE users SET balance = balance + (? * 2)" f"WHERE username = ?",
+                                (self.bet, self.name))
                     con.commit()
                     self.label_3.setText("Баланс: " f'{self.balance}' "р.")
 
-                elif (self.slot1 == self.slot3 == self.slot3) and (self.slot1 == 0) and (self.slot2 == 0) and (self.slot3 == 0):
+                elif (self.slot1 == self.slot3 == self.slot3) and (self.slot1 == 0) and (self.slot2 == 0) and \
+                        (self.slot3 == 0):
                     self.balance = self.balance + (self.bet * 10)
                     win = 'Вы выиграли!'
                     self.label_6.setText(win)
-                    cur.execute(f"UPDATE users SET balance = balance + (? * 10)" f"WHERE username = ?", (self.bet, self.name))
+                    cur.execute(f"UPDATE users SET balance = balance + (? * 10)" f"WHERE username = ?",
+                                (self.bet, self.name))
                     con.commit()
                     self.label_3.setText("Баланс: " f'{self.balance}' "р.")
 
@@ -615,7 +623,8 @@ class Zerohundred(QMainWindow):
                     self.balance = self.balance + (self.bet * 100)
                     win = 'Вы выиграли!'
                     self.label_6.setText(win)
-                    cur.execute(f"UPDATE users SET balance = balance + (? * 100)" f"WHERE username = ?", (self.bet, self.name))
+                    cur.execute(f"UPDATE users SET balance = balance + (? * 100)" f"WHERE username = ?",
+                                (self.bet, self.name))
                     con.commit()
                     self.label_3.setText("Баланс: " f'{self.balance}' "р.")
 
@@ -623,7 +632,8 @@ class Zerohundred(QMainWindow):
                     self.balance = self.balance + (self.bet * 2)
                     win = 'Вы выиграли!'
                     self.label_6.setText(win)
-                    cur.execute(f"UPDATE users SET balance = balance + (? * 2)" f"WHERE username = ?", (self.bet, self.name))
+                    cur.execute(f"UPDATE users SET balance = balance + (? * 2)" f"WHERE username = ?",
+                                (self.bet, self.name))
                     con.commit()
                     self.label_3.setText("Баланс: " f'{self.balance}' "р.")
 
@@ -639,7 +649,8 @@ class Zerohundred(QMainWindow):
                     self.balance = self.balance + (self.bet * 10)
                     win = 'Вы выиграли!'
                     self.label_6.setText(win)
-                    cur.execute(f"UPDATE users SET balance = balance + (? * 10)" f"WHERE username = ?", (self.bet, self.name))
+                    cur.execute(f"UPDATE users SET balance = balance + (? * 10)" f"WHERE username = ?",
+                                (self.bet, self.name))
                     con.commit()
                     self.label_3.setText("Баланс: " f'{self.balance}' "р.")
 
@@ -655,7 +666,8 @@ class Zerohundred(QMainWindow):
                     self.balance = self.balance + (self.bet * 100)
                     win = 'Вы выиграли!'
                     self.label_6.setText(win)
-                    cur.execute(f"UPDATE users SET balance = balance + (? * 100)" f"WHERE username = ?", (self.bet, self.name))
+                    cur.execute(f"UPDATE users SET balance = balance + (? * 100)" f"WHERE username = ?",
+                                (self.bet, self.name))
                     con.commit()
                     self.label_3.setText("Баланс: " f'{self.balance}' "р.")
         else:
